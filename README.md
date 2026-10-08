@@ -1,6 +1,6 @@
-# PD2 Mechanics Atlas
+# Cain
 
-An interactive 3D map of Project Diablo 2 game mechanics reverse engineered from the game's compiled code, and how
+Cain is an interactive 3D map of Project Diablo 2 game mechanics reverse engineered from the game's compiled code, and how
 each mechanic feeds the others.
 
 **Open it:** https://roofooevazan.github.io/pd2-mechanics-atlas/
