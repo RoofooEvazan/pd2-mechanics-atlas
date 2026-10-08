@@ -17,3 +17,23 @@ each mechanic feeds the others.
 
 Source references in each panel point at the research files they came from. The page is built from that research,
 which is not part of this repository.
+
+## Stream overlay (OBS)
+
+Add a **Browser Source** in OBS with this URL, width 1920, height 1080:
+
+```
+https://roofooevazan.github.io/pd2-mechanics-atlas/?stream
+```
+
+It shows only the globe, slowly rotating, with labels. Options (add with `&`):
+
+| Option | Effect |
+|---|---|
+| `speed=60` | Seconds per full turn (default 60) |
+| `zoom=1.12` | Globe size; larger number = smaller globe |
+| `tilt=0.32` | Tilt toward the viewer, in radians |
+| `bg=transparent` | No background, so the globe sits on top of your own scene |
+| `labels=0` | No labels |
+
+Example: `?stream&bg=transparent&speed=45`
