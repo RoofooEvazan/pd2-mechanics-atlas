@@ -123,6 +123,8 @@ button, input { font: inherit; color: inherit; }
   background: linear-gradient(180deg, #fff3c4 0%, #f2c76a 38%, #c8913a 62%, #7a4f1c 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
   filter: drop-shadow(0 0 0.18em rgba(0, 0, 0, 0.95)) drop-shadow(0 0 0.5em rgba(0, 0, 0, 0.8)) drop-shadow(0 0.05em 0.02em #000);
   animation: titleIn 2.4s ease-out both; }
+#streamTitle .above { display: block; font-size: 0.42em; letter-spacing: 0.24em; margin-bottom: 0.35em;
+  background: linear-gradient(180deg, #fbf3dc 0%, #e6d3a3 55%, #a98f5c 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
 #streamTitle small { display: block; font-size: 0.32em; letter-spacing: 0.32em; margin-top: 0.5em; }
 @keyframes titleIn { from { opacity: 0; letter-spacing: 0.14em; } to { opacity: 1; letter-spacing: 0.06em; } }
 @media (prefers-reduced-motion: reduce) { #streamTitle { animation: none; } }
@@ -785,7 +787,8 @@ frame();
 // ?stream: an OBS Browser Source / stream-overlay view: globe only, auto-rotating, decluttered labels.
 //   speed=<seconds per turn, default 60>  zoom=<default 1.12, larger = smaller globe>  tilt=<radians, default 0.32>
 //   bg=transparent (no background)  labels=0 (no labels)
-//   title=<text> over the globe (Exocet when installed, else Cinzel)  subtitle=<text>  titlepos=top|center|bottom
+//   title=<text> over the globe (Exocet when installed, else Cinzel)  above=<text> (line over the title)
+//   subtitle=<text>  titlepos=top|center|bottom
 // ?capture: frame-exact offline rendering through window.cainCapture (setup / render).
 if (CAPTURE || STREAM) {
   for (const id of ["rail", "dossier", "wip", "pathbar", "tip", "labels", "linkcard"]) document.getElementById(id).style.display = "none";
@@ -877,7 +880,9 @@ if (CAPTURE || STREAM) {
     if (title) {
       const el = document.createElement("div");
       el.id = "streamTitle";
-      el.textContent = title;
+      const above = QS.get("above");
+      if (above) { const a = document.createElement("span"); a.className = "above"; a.textContent = above; el.appendChild(a); }
+      el.appendChild(document.createTextNode(title));
       const sub = QS.get("subtitle");
       if (sub) { const sm = document.createElement("small"); sm.textContent = sub; el.appendChild(sm); }
       const pos = QS.get("titlepos") || "center";

@@ -36,10 +36,14 @@ It shows only the globe, slowly rotating, with labels. Options (add with `&`):
 | `bg=transparent` | No background, so the globe sits on top of your own scene |
 | `labels=0` | No labels |
 | `title=Stream%20Starting%20Soon` | Gold title over the globe (Diablo II's Exocet font if installed on the PC, else Cinzel) |
+| `above=RoofooEvazan` | Smaller line over the title |
 | `subtitle=...` | Smaller line under the title |
 | `titlepos=top` | Title position: `top`, `center` (default) or `bottom` |
 
-Example: `?stream&title=Stream%20Starting%20Soon&bg=transparent&speed=45`
+Scenes:
+
+- Stream starting: `?stream&above=RoofooEvazan&title=Stream%20Starting%20Soon`
+- Be right back: `?stream&above=RoofooEvazan&title=Be%20Right%20Back`
 
 The title uses Exocet, the Diablo II font, when it is installed on the streaming PC (OBS's browser uses installed
 fonts); after installing it, use **Refresh cache of current page** on the source.
