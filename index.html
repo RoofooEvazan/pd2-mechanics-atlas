@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cain</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus+SC&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Cinzel:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: full-bleed globe; a control rail floats top-left, the mechanic dossier docks right (bottom sheet on phones). */
 /* Single dark look by choice: an arcane star chart. */
@@ -117,6 +117,15 @@ button, input { font: inherit; color: inherit; }
 #wip span { font-size: 10.5px; line-height: 1.3; font-weight: 500; }
 #wip .stripes.r { transform: scaleX(-1); }
 
+#streamTitle { position: fixed; left: 50%; transform: translate(-50%, -50%); z-index: 5; pointer-events: none; text-align: center; white-space: nowrap;
+  font-family: "Exocet", "Exocet Blizzard Medium", "Exocet Blizzard Light", "ExocetLight", "Exocet Heavy", "Cinzel", Georgia, serif;
+  font-weight: 700; font-size: clamp(28px, 7.4vh, 120px); letter-spacing: 0.06em; line-height: 1.1;
+  background: linear-gradient(180deg, #fff3c4 0%, #f2c76a 38%, #c8913a 62%, #7a4f1c 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 0.18em rgba(0, 0, 0, 0.95)) drop-shadow(0 0 0.5em rgba(0, 0, 0, 0.8)) drop-shadow(0 0.05em 0.02em #000);
+  animation: titleIn 2.4s ease-out both; }
+#streamTitle small { display: block; font-size: 0.32em; letter-spacing: 0.32em; margin-top: 0.5em; }
+@keyframes titleIn { from { opacity: 0; letter-spacing: 0.14em; } to { opacity: 1; letter-spacing: 0.06em; } }
+@media (prefers-reduced-motion: reduce) { #streamTitle { animation: none; } }
 #linkcard { right: calc(16px + 414px + 12px); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: 360px; max-height: 62vh; overflow: auto; padding: 14px 16px 16px; }
 #linkcard .lc-head { font-family: var(--f-display); font-size: 16px; letter-spacing: 0.03em; line-height: 1.25; margin: 0 0 4px; text-wrap: balance; }
 #linkcard .lc-head .arr { color: var(--gold); font-family: var(--f-mono); font-size: 12px; margin: 0 6px; }
@@ -776,6 +785,7 @@ frame();
 // ?stream: an OBS Browser Source / stream-overlay view: globe only, auto-rotating, decluttered labels.
 //   speed=<seconds per turn, default 60>  zoom=<default 1.12, larger = smaller globe>  tilt=<radians, default 0.32>
 //   bg=transparent (no background)  labels=0 (no labels)
+//   title=<text> over the globe (Exocet when installed, else Cinzel)  subtitle=<text>  titlepos=top|center|bottom
 // ?capture: frame-exact offline rendering through window.cainCapture (setup / render).
 if (CAPTURE || STREAM) {
   for (const id of ["rail", "dossier", "wip", "pathbar", "tip", "labels", "linkcard"]) document.getElementById(id).style.display = "none";
@@ -802,9 +812,10 @@ if (CAPTURE || STREAM) {
   // Front-facing labels, nearest first; a label that would overlap one already placed is skipped. With `ease`,
   // labels shown last frame keep priority and fade in and out instead of popping.
   const v = new THREE.Vector3();
+  let keepClear = null;   // [x, y, w, h] the labels stay out of (the stream title)
   function drawLabels(ctx, ease) {
     if (!showLabels) return;
-    const scale = H / 900, placed = [], cand = [];
+    const scale = H / 900, placed = keepClear ? [keepClear] : [], cand = [];
     ctx.textBaseline = "middle";
     for (const n of labelSet) {
       v.copy(n.pos).applyQuaternion(rot);
@@ -862,6 +873,20 @@ if (CAPTURE || STREAM) {
       octx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     addEventListener("resize", size); size();
+    const title = QS.get("title");
+    if (title) {
+      const el = document.createElement("div");
+      el.id = "streamTitle";
+      el.textContent = title;
+      const sub = QS.get("subtitle");
+      if (sub) { const sm = document.createElement("small"); sm.textContent = sub; el.appendChild(sm); }
+      const pos = QS.get("titlepos") || "center";
+      el.style.top = pos === "top" ? "14%" : pos === "bottom" ? "86%" : "50%";
+      document.body.appendChild(el);
+      const clear = () => { const r = el.getBoundingClientRect(); keepClear = [r.left - 24, r.top - 16, r.width + 48, r.height + 32]; };
+      addEventListener("resize", clear);
+      document.fonts.ready.then(() => { clear(); setTimeout(clear, 2600); });   // after the font loads and the fade-in settles
+    }
     const t0 = performance.now();
     (function tick(now) {
       requestAnimationFrame(tick);
